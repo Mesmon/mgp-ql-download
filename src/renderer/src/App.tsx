@@ -1,8 +1,9 @@
 import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
+import { DownloadInputForm } from './components/DownloadInputForm'
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 
   return (
     <>
@@ -11,12 +12,13 @@ function App(): JSX.Element {
       <div className="text">
         Download <span className="react">QuickLook</span>
       </div>
-      <p className="tip">
+      <DownloadInputForm />
+      {/* <p className="tip">
         Please try pressing <code>F12</code> to open the devTool
       </p>
       <button className="btn" onClick={ipcHandle}>
         Ping
-      </button>
+      </button> */}
       <Versions />
     </>
   )
