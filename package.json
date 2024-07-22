@@ -22,12 +22,18 @@
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
-    "@electron-toolkit/utils": "^3.0.0"
+    "@electron-toolkit/utils": "^3.0.0",
+    "@tanstack/react-query": "^5.51.11",
+    "axios": "^1.7.2",
+    "electron-json-storage": "^4.6.0",
+    "keytar": "^7.9.0",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/electron-json-storage": "^4.5.4",
     "@types/node": "^20.14.8",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

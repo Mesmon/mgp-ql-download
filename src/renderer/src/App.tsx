@@ -1,6 +1,8 @@
 import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
-import { DownloadInputForm } from './components/DownloadInputForm'
+import PageManager from './components/PageManager'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App(): JSX.Element {
   // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
@@ -9,10 +11,10 @@ function App(): JSX.Element {
     <>
       <img alt="logo" className="logo" src={electronLogo} />
       <div className="creator">Developed by Michael Berezovsky</div>
-      <div className="text">
+      <div className="text-no-margin">
         Download <span className="react">QuickLook</span>
       </div>
-      <DownloadInputForm />
+      <PageManager />
       {/* <p className="tip">
         Please try pressing <code>F12</code> to open the devTool
       </p>
@@ -20,6 +22,7 @@ function App(): JSX.Element {
         Ping
       </button> */}
       <Versions />
+      <ToastContainer />
     </>
   )
 }
