@@ -3,7 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { downloadQuicklook } from './download-quicklook'
-import { getCredentials } from './utils/credentials'
+import { getCredentials, saveCredentials } from './utils/credentials'
+import { getAccessToken } from './api/get-access-token'
 
 function createWindow(): void {
   // Create the browser window.
@@ -54,18 +55,19 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  ipcMain.on('download', (event, catalogId) => {
+  ipcMain.on('download', (_, catalogId) => {
     downloadQuicklook(catalogId)
   })
 
   ipcMain.handle('check-credentials', async () => {
-    try {
-      // Simulate an API call or any asynchronous operation
-      const result = await getCredentials()
-      return { status: 200, data: result }
-    } catch (error) {
-      throw new Error('Failed to fetch credentials')
-    }
+    const result = await getCredentials()
+    await getAccessToken()
+    return { status: 200, data: result }
+  })
+
+  ipcMain.handle('save-credentials', async (_, data) => {
+    const { username, password } = JSON.parse(data)
+    await saveCredentials(username, password)
   })
 
   createWindow()

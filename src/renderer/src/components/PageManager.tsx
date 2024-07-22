@@ -4,21 +4,37 @@ import { DownloadInputForm } from '../components/DownloadInputForm'
 import LoginForm from './LoginForm'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
+import LoadingState from './LoadingState'
 
-const fetchCredentials = async (): Promise<CredentialsResponse> => {
+const getErrorMessage = (errorMessage: string): string => {
+  // Regular expression to match the part after "Error: "
+  const regex = /Error: (.*)/
+
+  // Using match to get the desired part
+  const match = errorMessage.match(regex)
+
+  // Returning the extracted message if found, otherwise a default message
+  return match && match[1] ? match[1] : 'No error message found'
+}
+
+const fetchAndVerifyCredentials = async (): Promise<CredentialsResponse> => {
   try {
     const response = await window.electron.ipcRenderer.invoke('check-credentials')
     return response
   } catch (error) {
-    throw new Error('Failed to fetch credentials')
+    if ((error as Error).message.includes('Request failed with status code 401')) {
+      throw new Error('Invalid credentials. Please login again.')
+    }
+    throw new Error(getErrorMessage((error as Error).message))
   }
 }
+
 const PageManager = (): JSX.Element => {
   const { data, error, isLoading, isError } = useQuery<CredentialsResponse, Error>({
     queryKey: ['checkCredentials'],
-    queryFn: fetchCredentials,
-    retry: false, // Disable automatic retries
-    refetchOnWindowFocus: false // Disable refetch on window focus
+    queryFn: fetchAndVerifyCredentials,
+    retry: false,
+    refetchOnWindowFocus: false
   })
 
   const [hasNotified, setHasNotified] = useState(false)
@@ -28,11 +44,16 @@ const PageManager = (): JSX.Element => {
       toast(error?.message, { type: 'error' })
       setHasNotified(true)
     }
-  }, [isError, hasNotified])
+    if (data && !hasNotified) {
+      toast('Successfully logged in!', { type: 'success' })
+      console.log(data)
+      setHasNotified(true)
+    }
+  }, [isError, hasNotified, data])
 
   return (
     <>
-      {isLoading && <div>Loading credentials...</div>}
+      {isLoading && <LoadingState message="Please wait while we check your credentials..." />}
       {isError && <LoginForm />}
       {data && (
         <div>

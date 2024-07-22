@@ -28,7 +28,7 @@ export async function saveCredentials(username: string, password: string): Promi
 }
 
 // Function to retrieve username and password
-export async function getCredentials(): Promise<Credentials | null> {
+export async function getCredentials(): Promise<Credentials> {
   try {
     // Get username using electron-json-storage
     const data = (await storeGet('user')) as { username: string }

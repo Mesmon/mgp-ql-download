@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 const LoginForm: React.FC = () => {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const queryClient = useQueryClient()
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     // Handle form submission logic
-    console.log({ email, password })
+    await window.electron.ipcRenderer.invoke(
+      'save-credentials',
+      JSON.stringify({ username, password })
+    )
+    // Invalidate the 'checkCredentials' query to trigger refetch
+    queryClient.invalidateQueries({ queryKey: ['checkCredentials'] })
   }
 
   return (
@@ -19,8 +26,8 @@ const LoginForm: React.FC = () => {
           <input
             type="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
