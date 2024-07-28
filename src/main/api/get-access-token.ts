@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getCredentials } from '../utils/credentials'
+import config from '../config'
 
 export const getAccessToken = async (): Promise<string> => {
   const credentials = await getCredentials()
@@ -15,14 +16,15 @@ export const getAccessToken = async (): Promise<string> => {
     scope: 'openid'
   })
 
-  const config = {
+  const tokenRequestConfig = {
     method: 'post',
-    url: 'https://account.maxar.com/auth/realms/mds/protocol/openid-connect/token',
+    // url: 'https://account.maxar.com/auth/realms/mds/protocol/openid-connect/token',
+    url: `${config.tokenHost}/auth/realms/mds/protocol/openid-connect/token`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     data: data.toString()
   }
-  const response = await axios.request(config)
+  const response = await axios(tokenRequestConfig)
   return response.data.access_token
 }

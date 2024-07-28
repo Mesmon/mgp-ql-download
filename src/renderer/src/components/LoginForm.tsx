@@ -8,7 +8,7 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
-    // Handle form submission logic
+
     await window.electron.ipcRenderer.invoke(
       'save-credentials',
       JSON.stringify({ username, password })

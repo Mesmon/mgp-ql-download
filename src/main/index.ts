@@ -55,8 +55,8 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  ipcMain.on('download', (_, catalogId) => {
-    downloadQuicklook(catalogId)
+  ipcMain.handle('download-quicklook', async (_, catalogId) => {
+    await downloadQuicklook(catalogId)
   })
 
   ipcMain.handle('check-credentials', async () => {

@@ -1,36 +1,37 @@
-import React, { useState, ChangeEvent, KeyboardEvent } from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 
 export const DownloadInputForm: React.FC = () => {
-  const [inputValue, setInputValue] = useState<string>('')
+  const [catalogId, setCatalogId] = useState<string>('')
   // const ipcHandle = (value: string): void => window.electron.ipcRenderer.invoke('download', value)
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setInputValue(event.target.value)
-  }
-
-  const handleSubmit = async (): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault()
     try {
-      console.log(`Submitting: ${inputValue}`)
-      // const x = await ipcHandle(inputValue)
-      // console.log(x)
-      setInputValue('') // Clear input after submission
+      await window.electron.ipcRenderer.invoke('download-quicklook', JSON.stringify({ catalogId }))
+      setCatalogId('') // Clear input after submission
+      toast(
+        <>
+          Successfully downloaded <span style={{ color: 'red' }}>{catalogId}</span>!
+        </>,
+        { type: 'success' }
+      )
     } catch (error) {
-      console.log('Mishka')
-    }
-  }
-
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>): void => {
-    if (event.key === 'Enter') {
-      handleSubmit()
+      toast((error as Error).message, { type: 'error' })
     }
   }
 
   return (
     <div>
-      <input type="text" value={inputValue} onChange={handleInputChange} onKeyUp={handleKeyPress} />
-      <button className="ts" onClick={handleSubmit}>
-        Submit
-      </button>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Catalog ID</label>
+          <input value={catalogId} onChange={(e) => setCatalogId(e.target.value)} required />
+        </div>
+        <button type="submit" className="login-button">
+          Download
+        </button>
+      </form>
     </div>
   )
 }
