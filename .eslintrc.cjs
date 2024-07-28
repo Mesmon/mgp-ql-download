@@ -1,4 +1,12 @@
 module.exports = {
+  rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto'
+      }
+    ]
+  },
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
