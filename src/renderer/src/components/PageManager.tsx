@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { CredentialsResponse } from '../types/CredentialsResponse'
+import { type CredentialsResponse } from '../../../types/CredentialsResponse'
 import { DownloadInputForm } from '../components/DownloadInputForm'
 import LoginForm from './LoginForm'
 import { toast } from 'react-toastify'

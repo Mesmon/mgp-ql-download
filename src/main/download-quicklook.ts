@@ -1,9 +1,14 @@
-import { getAccessToken } from './api/get-access-token'
+import { downloadQuicklookFile } from './api/download-quicklook-file'
+import { searchImage } from './api/search-image'
 
-export const downloadQuicklook = async (catalogId: string): Promise<void> => {
+export const downloadQuicklook = async (catalogIds: string): Promise<void> => {
   try {
-    const token = await getAccessToken()
-    console.log(token, catalogId)
+    const imageData = await searchImage(catalogIds)
+    if (imageData.features.length === 0) {
+      throw new Error('No images found')
+    }
+    const quicklookUrl = imageData.features[0].assets.browse.href
+    await downloadQuicklookFile(quicklookUrl)
   } catch (error) {
     throw new Error((error as Error).message)
   }
