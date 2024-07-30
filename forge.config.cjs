@@ -9,7 +9,11 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {}
+      config: {
+        name: 'swiss',
+        authors: 'Michael Berezovsky',
+        description: 'App to download ql'
+      }
     },
     {
       name: '@electron-forge/maker-zip',
