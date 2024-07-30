@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -6,7 +6,7 @@ import { downloadQuicklook } from './download-quicklook'
 import { getCredentials, saveCredentials } from './utils/credentials'
 import { getAccessToken } from './api/get-access-token'
 import { firstTimeSetup } from './utils/first-time-setup'
-import config, { loadConfig } from './config'
+import config, { loadConfig, setConfig } from './config'
 import { createAxiosClient } from './api/axiosClient'
 
 const initializeApp = async (app: Electron.App): Promise<void> => {
@@ -81,6 +81,27 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('get-config', async () => {
     return config
+  })
+
+  ipcMain.handle('set-config', async (_, data) => {
+    await setConfig(data)
+    await loadConfig()
+  })
+
+  ipcMain.handle('select-download-path', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      defaultPath: config.appConfig.downloadPath
+    })
+    if (!result.canceled) {
+      const path = result.filePaths[0]
+      await setConfig({ ...config, appConfig: { ...config.appConfig, downloadPath: path } })
+      await loadConfig()
+      // send config changed event
+      BrowserWindow.getAllWindows().forEach((window) => {
+        window.webContents.send('config-changed')
+      })
+    }
   })
 
   createWindow()
