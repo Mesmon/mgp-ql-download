@@ -5,7 +5,7 @@ import { promisify } from 'util'
 const storeSet = promisify(storage.set)
 const storeGet = promisify(storage.get)
 
-interface Credentials {
+type Credentials = {
   username: string
   password: string | null
 }
