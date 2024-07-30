@@ -4,6 +4,18 @@ import { promisify } from 'util'
 const storeSet = promisify(storage.set)
 const storeGet = promisify(storage.get)
 
+let config: Config = {
+  apiConfig: {
+    tokenHost: '',
+    host: '',
+    version: '',
+    clientId: ''
+  },
+  appConfig: {
+    downloadPath: ''
+  }
+}
+
 export type Config = {
   apiConfig: {
     tokenHost: string
@@ -35,6 +47,13 @@ export const setConfig = async (config: Config): Promise<void> => {
   }
 }
 
-const config = await getConfig()
+export const loadConfig = async (): Promise<void> => {
+  try {
+    config = await getConfig()
+  } catch (error) {
+    console.error('Error loading config:', error)
+    throw error
+  }
+}
 
 export default config

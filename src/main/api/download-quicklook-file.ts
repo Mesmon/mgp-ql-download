@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises'
+import { writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { axiosClient } from './axiosClient'
 import config from '../config'
@@ -26,6 +26,10 @@ export const downloadQuicklookFile = async (
       config.appConfig.downloadPath,
       `${extractIdFromUrl(quicklookUrl)}.png`
     )
+
+    // ensure the download path exists. If it doesn't, create it.
+    const downloadDir = path.dirname(filePath)
+    await mkdir(downloadDir, { recursive: true })
 
     await writeFile(filePath, response.data)
     return filePath

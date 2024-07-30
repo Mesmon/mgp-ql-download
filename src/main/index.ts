@@ -5,6 +5,15 @@ import icon from '../../resources/icon.png?asset'
 import { downloadQuicklook } from './download-quicklook'
 import { getCredentials, saveCredentials } from './utils/credentials'
 import { getAccessToken } from './api/get-access-token'
+import { firstTimeSetup } from './utils/first-time-setup'
+import { loadConfig } from './config'
+import { createAxiosClient } from './api/axiosClient'
+
+const initializeApp = async (app: Electron.App): Promise<void> => {
+  await firstTimeSetup(app)
+  await loadConfig()
+  await createAxiosClient()
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -41,7 +50,10 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // Initialize application configurations and first-time setup
+  await initializeApp(app)
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

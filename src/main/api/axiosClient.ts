@@ -1,11 +1,8 @@
-import axios from 'axios'
-import config from '../config'
+import axios, { AxiosInstance } from 'axios'
 import { getAccessToken } from './get-access-token'
+import config from '../config'
 
-// Create an Axios instance
-const axiosClient = axios.create({
-  baseURL: config.apiConfig.host
-})
+let axiosClient: AxiosInstance
 
 let cachedToken: string | null = null
 let tokenExpiration: number | null = null
@@ -19,27 +16,33 @@ const getCachedAccessToken = async (): Promise<string> => {
   return cachedToken
 }
 
-// Set up request interceptor to inject the token
-axiosClient.interceptors.request.use(
-  async (config) => {
-    try {
-      const token = await getCachedAccessToken()
-      if (config.headers) {
-        config.headers.set('Authorization', `Bearer ${token}`)
-      } else {
-        config.headers = new axios.AxiosHeaders()
-        config.headers.set('Authorization', `Bearer ${token}`)
+const createAxiosClient = async (): Promise<void> => {
+  axiosClient = axios.create({
+    baseURL: config.apiConfig.host
+  })
+
+  // Set up request interceptor to inject the token
+  axiosClient.interceptors.request.use(
+    async (config) => {
+      try {
+        const token = await getCachedAccessToken()
+        if (config.headers) {
+          config.headers.set('Authorization', `Bearer ${token}`)
+        } else {
+          config.headers = new axios.AxiosHeaders()
+          config.headers.set('Authorization', `Bearer ${token}`)
+        }
+        return config
+      } catch (error) {
+        console.error('Error fetching access token:', error)
+        return Promise.reject(error)
       }
-      return config
-    } catch (error) {
-      console.error('Error fetching access token:', error)
+    },
+    (error) => {
+      console.error('Request error:', error)
       return Promise.reject(error)
     }
-  },
-  (error) => {
-    console.error('Request error:', error)
-    return Promise.reject(error)
-  }
-)
+  )
+}
 
-export { axiosClient }
+export { axiosClient, createAxiosClient }
