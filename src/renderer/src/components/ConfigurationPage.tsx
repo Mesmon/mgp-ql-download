@@ -1,7 +1,5 @@
 import React from 'react'
-import { Box, TextField, Typography, Button, CircularProgress } from '@mui/material'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFolderOpen } from '@fortawesome/free-solid-svg-icons'
+import { Box, TextField, Typography, CircularProgress } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { styled } from '@mui/system'
 import { toast } from 'react-toastify'
@@ -68,7 +66,7 @@ const ConfigurationPage = (): React.JSX.Element => {
     })
   }, [])
 
-  const handleInputChange = async (section: string, key: string, value: string) => {
+  const handleInputChange = async (section: string, key: string, value: string): Promise<void> => {
     if (config) {
       const updatedConfig = {
         ...config,
@@ -90,14 +88,14 @@ const ConfigurationPage = (): React.JSX.Element => {
     }
   }
 
-  const handleSelectDownloadPath = async () => {
+  const handleSelectDownloadPath = async (): Promise<void> => {
     const result = await window.electron.ipcRenderer.invoke('select-download-path')
     if (result && config) {
       handleInputChange('appConfig', 'downloadPath', result)
     }
   }
 
-  const formatCamelCase = (text: string) => {
+  const formatCamelCase = (text: string): string => {
     return text.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
   }
 
