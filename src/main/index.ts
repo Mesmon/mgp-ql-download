@@ -53,7 +53,7 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('download-quicklook', async (event, catalogIds) => {
-    await downloadQuicklook(JSON.parse(catalogIds).catalogIds, event)
+    return await downloadQuicklook(JSON.parse(catalogIds).catalogIds, event)
   })
 
   ipcMain.handle('check-credentials', async () => {

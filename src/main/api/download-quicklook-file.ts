@@ -12,22 +12,23 @@ const extractIdFromUrl = (url: string): string => {
 export const downloadQuicklookFile = async (
   quicklookUrl: string,
   event: Electron.IpcMainInvokeEvent
-): Promise<void> => {
+): Promise<string> => {
   try {
     const response = await axiosClient.get(quicklookUrl, {
       responseType: 'arraybuffer',
       onDownloadProgress(progressEvent) {
-        event.sender.send('download-progress', {
-          total: progressEvent.total,
-          loaded: progressEvent.loaded
-        })
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total!)
+        event.sender.send('download-progress', percentCompleted)
       }
     })
 
-    await writeFile(
-      path.join(config.appConfig.downloadPath, `${extractIdFromUrl(quicklookUrl)}.png`),
-      response.data
+    const filePath = path.join(
+      config.appConfig.downloadPath,
+      `${extractIdFromUrl(quicklookUrl)}.png`
     )
+
+    await writeFile(filePath, response.data)
+    return filePath
   } catch (error) {
     console.error('Error downloading the file:', error)
     throw error
