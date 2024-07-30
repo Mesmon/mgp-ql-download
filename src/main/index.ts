@@ -6,7 +6,7 @@ import { downloadQuicklook } from './download-quicklook'
 import { getCredentials, saveCredentials } from './utils/credentials'
 import { getAccessToken } from './api/get-access-token'
 import { firstTimeSetup } from './utils/first-time-setup'
-import { loadConfig } from './config'
+import config, { loadConfig } from './config'
 import { createAxiosClient } from './api/axiosClient'
 
 const initializeApp = async (app: Electron.App): Promise<void> => {
@@ -77,6 +77,10 @@ app.whenReady().then(async () => {
   ipcMain.handle('save-credentials', async (_, data) => {
     const { username, password } = JSON.parse(data)
     await saveCredentials(username, password)
+  })
+
+  ipcMain.handle('get-config', async () => {
+    return config
   })
 
   createWindow()
