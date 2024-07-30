@@ -1,12 +1,58 @@
-const config = {
+import storage from 'electron-json-storage'
+import { promisify } from 'util'
+
+const storeSet = promisify(storage.set)
+const storeGet = promisify(storage.get)
+
+let config: Config = {
   apiConfig: {
-    tokenHost: 'https://account.maxar.com',
-    host: 'https://api.maxar.com',
-    version: 'v1',
-    clientId: 'mgp'
+    tokenHost: '',
+    host: '',
+    version: '',
+    clientId: ''
   },
   appConfig: {
-    downloadPath: `C:\\Users\\New Space Developer\\Pictures\\test`
+    downloadPath: ''
+  }
+}
+
+export type Config = {
+  apiConfig: {
+    tokenHost: string
+    host: string
+    version: string
+    clientId: string
+  }
+  appConfig: {
+    downloadPath: string
+  }
+}
+
+export const getConfig = async (): Promise<Config> => {
+  try {
+    const data = await storeGet('config')
+    return data as Config
+  } catch (error) {
+    console.error('Error getting config:', error)
+    throw error
+  }
+}
+
+export const setConfig = async (config: Config): Promise<void> => {
+  try {
+    await storeSet('config', config)
+  } catch (error) {
+    console.error('Error setting config:', error)
+    throw error
+  }
+}
+
+export const loadConfig = async (): Promise<void> => {
+  try {
+    config = await getConfig()
+  } catch (error) {
+    console.error('Error loading config:', error)
+    throw error
   }
 }
 

@@ -19,7 +19,7 @@ export const DownloadInputForm: React.FC = () => {
     window.electron.ipcRenderer.on('download-progress', handleDownloadProgress)
 
     return (): void => {
-      window.electron.ipcRenderer.removeListener('download-progress', handleDownloadProgress)
+      window.electron.ipcRenderer.removeAllListeners('download-progress')
     }
   }, [])
 

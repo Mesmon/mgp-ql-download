@@ -5,6 +5,7 @@ import LoginForm from './LoginForm'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import LoadingState from './LoadingState'
+import ConfigurationModal from './ConfigurationModal'
 
 const getErrorMessage = (errorMessage: string): string => {
   // Regular expression to match the part after "Error: "
@@ -57,6 +58,7 @@ const PageManager = (): JSX.Element => {
       {data && (
         <div>
           <DownloadInputForm />
+          <ConfigurationModal />
         </div>
       )}
     </>
