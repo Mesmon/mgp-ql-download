@@ -3,7 +3,6 @@ import { toast } from 'react-toastify'
 
 export const DownloadInputForm: React.FC = () => {
   const [catalogIds, setCatalogIds] = useState<string>('')
-  // const ipcHandle = (value: string): void => window.electron.ipcRenderer.invoke('download', value)
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()

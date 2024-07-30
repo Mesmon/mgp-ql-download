@@ -46,7 +46,6 @@ const PageManager = (): JSX.Element => {
     }
     if (data && !hasNotified) {
       toast('Successfully logged in!', { type: 'success' })
-      console.log(data)
       setHasNotified(true)
     }
   }, [isError, hasNotified, data])

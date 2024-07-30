@@ -6,7 +6,7 @@ const config = {
     clientId: 'mgp'
   },
   appConfig: {
-    downloadPath: `C:\\Users\\mishk\\OneDrive\\Pictures\\test`
+    downloadPath: `C:\\Users\\New Space Developer\\Pictures\\test`
   }
 }
 

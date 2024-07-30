@@ -52,11 +52,8 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
-
-  ipcMain.handle('download-quicklook', async (_, catalogIds) => {
-    await downloadQuicklook(JSON.parse(catalogIds).catalogIds)
+  ipcMain.handle('download-quicklook', async (event, catalogIds) => {
+    await downloadQuicklook(JSON.parse(catalogIds).catalogIds, event)
   })
 
   ipcMain.handle('check-credentials', async () => {

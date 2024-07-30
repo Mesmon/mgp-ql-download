@@ -9,10 +9,19 @@ const extractIdFromUrl = (url: string): string => {
   return match ? match[1] : ''
 }
 
-export const downloadQuicklookFile = async (quicklookUrl: string): Promise<void> => {
+export const downloadQuicklookFile = async (
+  quicklookUrl: string,
+  event: Electron.IpcMainInvokeEvent
+): Promise<void> => {
   try {
     const response = await axiosClient.get(quicklookUrl, {
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      onDownloadProgress(progressEvent) {
+        event.sender.send('download-progress', {
+          total: progressEvent.total,
+          loaded: progressEvent.loaded
+        })
+      }
     })
 
     await writeFile(

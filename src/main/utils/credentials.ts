@@ -17,11 +17,9 @@ export async function saveCredentials(username: string, password: string): Promi
   try {
     // Save username using electron-json-storage
     await storeSet('user', { username })
-    console.log('Username saved')
 
     // Save password using keytar
     await keytar.setPassword(APP_NAME, username, password)
-    console.log('Password saved')
   } catch (error) {
     console.error('Error saving credentials:', error)
   }
