@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
+import { getErrorMessage } from './PageManager'
 
 export const DownloadInputForm: React.FC = () => {
   const [catalogIds, setCatalogIds] = useState<string>('')
@@ -26,7 +27,7 @@ export const DownloadInputForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     try {
-      toast(`Starting download for ${catalogIds}...`, { type: 'info' })
+      toast(`Searching for ${catalogIds}...`, { type: 'info', autoClose: 4000 })
       const filePath: string = await window.electron.ipcRenderer.invoke(
         'download-quicklook',
         JSON.stringify({ catalogIds })
@@ -40,7 +41,7 @@ export const DownloadInputForm: React.FC = () => {
         { type: 'success', onClick: () => window.electron.shell.showItemInFolder(filePath) }
       )
     } catch (error) {
-      toast((error as Error).message, { type: 'error' })
+      toast(getErrorMessage((error as Error).message), { type: 'error' })
     } finally {
       toast.done(toastId.current!) // Mark toast as done
       toastId.current = null // Reset toastId

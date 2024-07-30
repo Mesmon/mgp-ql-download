@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import LoadingState from './LoadingState'
 import ConfigurationModal from './ConfigurationModal'
 
-const getErrorMessage = (errorMessage: string): string => {
+export const getErrorMessage = (errorMessage: string): string => {
   // Regular expression to match the part after "Error: "
   const regex = /Error: (.*)/
 
