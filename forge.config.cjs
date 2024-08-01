@@ -3,7 +3,8 @@ module.exports = {
     ignore: [
       /^\/src/,
       /(.eslintrc.json)|(.gitignore)|(electron.vite.config.ts)|(forge.config.cjs)|(tsconfig.*)/
-    ]
+    ],
+    icon: '/build/icon'
   },
   rebuildConfig: {},
   makers: [
