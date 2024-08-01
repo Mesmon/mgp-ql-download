@@ -1,5 +1,5 @@
-import { downloadQuicklookFile } from './api/download-quicklook-file'
-import { searchImage } from './api/search-image'
+import { downloadQuicklookFile } from './download-quicklook-file'
+import { searchImage } from './search-image'
 
 export const downloadQuicklook = async (
   catalogIds: string,

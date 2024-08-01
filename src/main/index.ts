@@ -3,25 +3,36 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { updateElectronApp } from 'update-electron-app'
 import icon from '../../resources/icon.png?asset'
-import { downloadQuicklook } from './download-quicklook'
+import { downloadQuicklook } from './api/download-quicklook'
 import { getCredentials, saveCredentials } from './utils/credentials'
 import { getAccessToken } from './api/get-access-token'
 import { firstTimeSetup } from './utils/first-time-setup'
 import config, { loadConfig, setConfig } from './config'
 import { createAxiosClient } from './api/axiosClient'
+import log from 'electron-log/main'
+
+log.initialize()
 
 if (require('electron-squirrel-startup')) app.quit()
 
-updateElectronApp() // additional configuration options available
+updateElectronApp()
 
 const initializeApp = async (app: Electron.App): Promise<void> => {
+  log.info('Starting first time setup...')
   await firstTimeSetup(app)
+  log.info('First time setup completed.')
+
+  log.info('Loading configuration...')
   await loadConfig()
+  log.info('Configuration loaded.')
+
+  log.info('Creating Axios client...')
   await createAxiosClient()
+  log.info('Axios client created.')
 }
 
 function createWindow(): void {
-  // Create the browser window.
+  log.info('Creating main browser window...')
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -35,6 +46,7 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
+    log.info('Main window ready to show.')
     mainWindow.show()
   })
 
@@ -43,8 +55,6 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -52,48 +62,49 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
-  // Initialize application configurations and first-time setup
-  await initializeApp(app)
+  log.info('App is ready.')
 
-  // Set app user model id for windows
+  await initializeApp(app)
+  log.info('App initialization completed.')
+
   electronApp.setAppUserModelId('com.electron')
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   ipcMain.handle('download-quicklook', async (event, catalogIds) => {
+    log.info('Handling download-quicklook IPC event.')
     return await downloadQuicklook(JSON.parse(catalogIds).catalogIds, event)
   })
 
   ipcMain.handle('check-credentials', async () => {
+    log.info('Handling check-credentials IPC event.')
     const result = await getCredentials()
     await getAccessToken()
     return { status: 200, data: result }
   })
 
   ipcMain.handle('save-credentials', async (_, data) => {
+    log.info('Handling save-credentials IPC event.')
     const { username, password } = JSON.parse(data)
     await saveCredentials(username, password)
   })
 
   ipcMain.handle('get-config', async () => {
+    log.info('Handling get-config IPC event.')
     return config
   })
 
   ipcMain.handle('set-config', async (_, data) => {
+    log.info('Handling set-config IPC event.')
     await setConfig(data)
     await loadConfig()
   })
 
   ipcMain.handle('select-download-path', async () => {
+    log.info('Handling select-download-path IPC event.')
     const result = await dialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: config.appConfig.downloadPath
@@ -102,7 +113,8 @@ app.whenReady().then(async () => {
       const path = result.filePaths[0]
       await setConfig({ ...config, appConfig: { ...config.appConfig, downloadPath: path } })
       await loadConfig()
-      // send config changed event
+      log.info(`Download path set to ${path}.`)
+
       BrowserWindow.getAllWindows().forEach((window) => {
         window.webContents.send('config-changed')
       })
@@ -112,20 +124,12 @@ app.whenReady().then(async () => {
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.

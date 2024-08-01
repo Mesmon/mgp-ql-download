@@ -2,6 +2,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { axiosClient } from './axiosClient'
 import config from '../config'
+import log from 'electron-log/main'
 
 const extractIdFromUrl = (url: string): string => {
   const pattern = /\/items\/(\w+)\/assets/
@@ -14,6 +15,7 @@ export const downloadQuicklookFile = async (
   event: Electron.IpcMainInvokeEvent
 ): Promise<string> => {
   try {
+    log.info(`Starting download for URL: ${quicklookUrl}`)
     const response = await axiosClient.get(quicklookUrl, {
       responseType: 'arraybuffer',
       onDownloadProgress(progressEvent) {
@@ -27,14 +29,17 @@ export const downloadQuicklookFile = async (
       `${extractIdFromUrl(quicklookUrl)}.png`
     )
 
+    log.info(`Saving file to: ${filePath}`)
+
     // ensure the download path exists. If it doesn't, create it.
     const downloadDir = path.dirname(filePath)
     await mkdir(downloadDir, { recursive: true })
 
     await writeFile(filePath, response.data)
+    log.info(`File downloaded and saved to: ${filePath}`)
     return filePath
   } catch (error) {
-    console.error('Error downloading the file:', error)
+    log.error('Error downloading the file:', error)
     throw error
   }
 }
