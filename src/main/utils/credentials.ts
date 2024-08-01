@@ -10,7 +10,7 @@ type Credentials = {
   password: string | null
 }
 
-const APP_NAME = import.meta.env.MAIN_VITE_APP_NAME || 'swiss'
+const APP_NAME = import.meta.env.MAIN_VITE_APP_NAME || 'queeng'
 
 // Function to save username and password
 export async function saveCredentials(username: string, password: string): Promise<void> {

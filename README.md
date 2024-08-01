@@ -1,6 +1,10 @@
-# mgp-ql-download-try
+# QueenG
 
 An Electron application with React and TypeScript
+
+## Features
+Downloads QuickLooks (Browse) images of Maxar's satellites and stores them in a local folder.
+Uses Maxar's MGP API to fetch the images.
 
 ## Recommended IDE Setup
 

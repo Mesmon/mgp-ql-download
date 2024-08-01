@@ -4,6 +4,7 @@ import { getErrorMessage } from './PageManager'
 
 export const DownloadInputForm: React.FC = () => {
   const [catalogIds, setCatalogIds] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const toastId = useRef<string | number | null>(null)
 
   useEffect(() => {
@@ -26,8 +27,9 @@ export const DownloadInputForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
+    setIsLoading(true)
     try {
-      toast(`Searching for ${catalogIds}...`, { type: 'info', autoClose: 4000 })
+      toast(`Searching for ${catalogIds}...`, { type: 'info', autoClose: 1500 })
       const filePath: string = await window.electron.ipcRenderer.invoke(
         'download-quicklook',
         JSON.stringify({ catalogIds })
@@ -36,13 +38,19 @@ export const DownloadInputForm: React.FC = () => {
 
       toast(
         <div style={{ cursor: 'pointer' }}>
-          Successfully downloaded <span style={{ color: 'red' }}>{catalogIds}</span>!
+          <span>
+            <b>Click to open the folder:</b>
+          </span>
+          <div>
+            Successfully downloaded <span style={{ color: 'red' }}>{catalogIds}</span>!
+          </div>
         </div>,
         { type: 'success', onClick: () => window.electron.shell.showItemInFolder(filePath) }
       )
     } catch (error) {
       toast(getErrorMessage((error as Error).message), { type: 'error' })
     } finally {
+      setIsLoading(false)
       toast.done(toastId.current!) // Mark toast as done
       toastId.current = null // Reset toastId
     }
@@ -55,8 +63,8 @@ export const DownloadInputForm: React.FC = () => {
           <label htmlFor="email">Catalog ID</label>
           <input value={catalogIds} onChange={(e) => setCatalogIds(e.target.value)} required />
         </div>
-        <button type="submit" className="login-button">
-          Download
+        <button type="submit" className="login-button" disabled={isLoading}>
+          {isLoading ? 'Downloading...' : 'Download'}
         </button>
       </form>
     </div>
