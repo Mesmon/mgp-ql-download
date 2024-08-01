@@ -1,6 +1,6 @@
 {
   "name": "queen-g",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MGP quicklook downloader",
   "main": "./dist/main/index.js",
   "author": "Michael Berezovsky",
