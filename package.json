@@ -1,6 +1,6 @@
 {
   "name": "mgp-ql-download",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MGP quicklook downloader",
   "main": "./dist/main/index.js",
   "author": "Michael Berezovsky",
