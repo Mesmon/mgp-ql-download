@@ -1,6 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { updateElectronApp } from 'update-electron-app'
 import icon from '../../resources/icon.png?asset'
 import { downloadQuicklook } from './download-quicklook'
 import { getCredentials, saveCredentials } from './utils/credentials'
@@ -8,6 +9,10 @@ import { getAccessToken } from './api/get-access-token'
 import { firstTimeSetup } from './utils/first-time-setup'
 import config, { loadConfig, setConfig } from './config'
 import { createAxiosClient } from './api/axiosClient'
+
+if (require('electron-squirrel-startup')) app.quit()
+
+updateElectronApp() // additional configuration options available
 
 const initializeApp = async (app: Electron.App): Promise<void> => {
   await firstTimeSetup(app)

@@ -10,9 +10,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'swiss',
-        authors: 'Michael Berezovsky',
-        description: 'App to download ql'
+        name: 'swiss'
       }
     },
     {
@@ -26,6 +24,18 @@ module.exports = {
     {
       name: '@electron-forge/maker-rpm',
       config: {}
+    }
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'Mesmon',
+          name: 'mgp-ql-download'
+        },
+        prerelease: true
+      }
     }
   ]
 }
